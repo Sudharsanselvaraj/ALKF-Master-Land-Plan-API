@@ -40,6 +40,7 @@ log = logging.getLogger(__name__)
 
 ox.settings.use_cache   = True
 ox.settings.log_console = False
+ox.settings.timeout     = 30    # max seconds per OSMnx HTTP request
 
 # View fetch radius — 300m covers the 200m analysis radius with margin,
 # and keeps OSMnx response sizes small enough to stay under Render's timeout.
@@ -643,26 +644,3 @@ def generate_site_intelligence(
         f"t={time.time() - t0:.1f}s"
     )
     return output
-
-
-log = logging.getLogger(__name__)
-
-ox.settings.use_cache  = True
-ox.settings.log_console = False
-
-# ── View label mapping ────────────────────────────────────────
-# view.py uses  GREEN / WATER / CITY / OPEN  internally.
-# The spec requires SEA / HARBOR / RESERVOIR / MOUNTAIN / PARK / GREEN / CITY.
-# We map water features by OSM tag to the richer label set.
-_WATER_SUBTYPE_TAGS = {
-    "sea":        ["bay", "coastline", "strait"],
-    "harbor":     ["harbour", "harbor"],
-    "reservoir":  ["reservoir"],
-}
-
-_VIEW_LABEL_REMAP = {
-    "GREEN": "GREEN",
-    "WATER": "SEA",     # default water → SEA; overridden by subtype below
-    "CITY":  "CITY",
-    "OPEN":  "GREEN",   # open areas with no dominant feature → GREEN
-}
