@@ -351,7 +351,7 @@ image_bytes (PDF or PNG/JPEG)
               │                                        │
               │ cv2.findContours(RETR_EXTERNAL)        │
               │ Filter: area >= 200 px                 │
-              │ approxPolyDP(ε = 0.002 × arc_length)  │
+              │ approxPolyDP(ε = 0.002 × arc_length)   │
               │                                        │
               │ _pixel_to_geo():                       │
               │   pixel (0,0)   = (site_bbox.minx,     │
