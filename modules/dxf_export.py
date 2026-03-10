@@ -16,6 +16,8 @@
 from __future__ import annotations
 
 import logging
+import os
+import tempfile
 from io import BytesIO
 from typing import Optional
 
@@ -273,14 +275,33 @@ def export_dxf(intelligence_data: dict) -> BytesIO:
         _write_non_building_areas(msp, non_building)
 
     # ── Serialise to BytesIO ──────────────────────────────────
-    buf = BytesIO()
-    doc.write(buf)
-    buf.seek(0)
+    # ezdxf doc.write() writes ASCII DXF text to a text-mode stream.
+    # Passing a BytesIO raises "a bytes-like object is required, not 'str'".
+    # Fix: write to a named temp file (text mode), read back as binary bytes.
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            suffix=".dxf", delete=False, mode="w", encoding="utf-8"
+        ) as tmp:
+            tmp_path = tmp.name
+            doc.write(tmp)
+
+        with open(tmp_path, "rb") as f:
+            raw = f.read()
+
+        buf = BytesIO(raw)
+        buf.seek(0)
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
 
     log.info(
         f"[dxf_export] DONE  "
         f"boundary={n}pts  "
         f"non_building={len(non_building)} zones  "
-        f"size={buf.getbuffer().nbytes:,} bytes"
+        f"size={len(raw):,} bytes"
     )
     return buf
