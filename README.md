@@ -70,7 +70,7 @@ Client Request
 │  FastAPI  (app.py)                                          │
 │                                                             │
 │  POST /site-intelligence        → JSONResponse              │
-│  POST /site-intelligence-dxf   → StreamingResponse (.dxf)  │
+│  POST /site-intelligence-dxf   → StreamingResponse (.dxf)   │
 │  GET  /                         → health check              │
 │                                                             │
 │  In-memory cache (CACHE_STORE)                              │
@@ -83,7 +83,7 @@ Client Request
 │  generate_site_intelligence()  (spatial_intelligence.py)    │
 │                                                             │
 │  Step 1  resolve_location()     → (lon, lat) WGS84          │
-│          get_lot_boundary()     → Polygon EPSG:3857          │
+│          get_lot_boundary()     → Polygon EPSG:3857         │
 │          fallback 1: OSM building polygon nearest site      │
 │          fallback 2: 40m circular buffer                    │
 │                                                             │
@@ -102,9 +102,9 @@ Client Request
 │                                                             │
 │  Step 5  _build_noise_grid()                                │
 │          Full noise.py pipeline:                            │
-│          ATCWFSLoader → TrafficAssigner → LNRSAssigner       │
+│          ATCWFSLoader → TrafficAssigner → LNRSAssigner      │
 │          → CanyonAssigner → EmissionEngine                  │
-│          → PropagationEngine.run() → (X, Y, noise[i,j])    │
+│          → PropagationEngine.run() → (X, Y, noise[i,j])     │
 │          _sample_noise_at_points() — NN grid lookup         │
 │          fallback: _fallback_noise_from_roads() vectorised  │
 │                                                             │
