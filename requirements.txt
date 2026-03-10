@@ -2,13 +2,12 @@
 # requirements.txt
 # ALKF Master Land Plan API  v1.0
 #
-# Versions are unpinned to allow pip to resolve compatible
-# wheels for the Render runtime (currently Python 3.14).
-# setuptools is listed explicitly to fix pkg_resources errors
-# that occur on newer Python versions.
+# Versions are unpinned — pip resolves compatible wheels for
+# the active Python runtime.
+# setuptools is explicit to fix pkg_resources on Python 3.12+.
 # ============================================================
 
-# Build system fix (required for Python 3.12+)
+# Build system (required for Python 3.12+)
 setuptools
 
 # API framework
@@ -28,8 +27,18 @@ osmnx
 numpy
 scipy
 
+# Data processing
+pandas
+networkx
+
 # HTTP (resolver API calls)
 requests
+
+# Visualisation — required by view.py and noise.py internals
+matplotlib
+contextily
+Pillow
+scikit-learn
 
 # DXF export
 ezdxf
@@ -37,7 +46,3 @@ ezdxf
 # Lease plan parsing
 opencv-python-headless
 pdf2image
-
-# Noise pipeline internals (reused from view.py / noise.py)
-pandas
-networkx
