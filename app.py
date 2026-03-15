@@ -3,13 +3,6 @@
 # ALKF Master Land Plan API  v1.2  (Flask)
 # ============================================================
 
-# ── Gevent monkey-patch — MUST be first ──────────────────────
-# Patches stdlib sockets/threads so gunicorn gevent worker can
-# yield during long I/O (OSMnx fetches, WFS calls, noise grid).
-# Without this the sync worker blocks and Render kills the request.
-from gevent import monkey
-monkey.patch_all()
-
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from io import BytesIO
@@ -46,7 +39,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 log.info("Loading building height dataset...")
 BUILDING_DATA = gpd.read_file(
-    os.path.join(DATA_DIR, "BUILDINGS_FINAL .gpkg")
+    os.path.join(DATA_DIR, "BUILDINGS_FINAL.gpkg")
 ).to_crs(3857)
 if "HEIGHT_M" not in BUILDING_DATA.columns:
     raise RuntimeError(
