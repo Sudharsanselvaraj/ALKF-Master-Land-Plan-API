@@ -1,12 +1,3 @@
-# ============================================================
-# requirements.txt
-# ALKF Master Land Plan API  v1.0
-#
-# Versions are unpinned — pip resolves compatible wheels for
-# the active Python runtime.
-# setuptools is explicit to fix pkg_resources on Python 3.12+.
-# ============================================================
-
 # Build system (required for Python 3.12+)
 setuptools
 
@@ -14,6 +5,7 @@ setuptools
 flask
 flask-cors
 gunicorn
+gevent
 
 # Geospatial core
 geopandas
