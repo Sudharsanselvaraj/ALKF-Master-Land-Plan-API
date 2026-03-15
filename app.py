@@ -1,6 +1,6 @@
 # ============================================================
 # app.py
-# ALKF Master Land Plan API  v1.0
+# ALKF Master Land Plan API  v1.2
 # ============================================================
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
@@ -16,8 +16,6 @@ import logging
 import hashlib
 import json
 
-import geopandas as gpd
-
 from modules.spatial_intelligence import generate_site_intelligence
 from modules.dxf_export            import export_dxf
 
@@ -31,7 +29,7 @@ log = logging.getLogger(__name__)
 # ── App ───────────────────────────────────────────────────────
 app = FastAPI(
     title="ALKF Master Land Plan API",
-    version="1.0",
+    version="1.2",
     description="Boundary Intelligence Engine — site boundary sampled at 1m intervals with view classification, noise sampling, and optional lease plan non-building area extraction.",
 )
 
@@ -101,7 +99,7 @@ def normalise_request(req: SiteIntelligenceRequest):
 def health():
     return {
         "service": "ALKF Master Land Plan API",
-        "version": "1.0",
+        "version": "1.2",
         "status":  "operational",
     }
 
