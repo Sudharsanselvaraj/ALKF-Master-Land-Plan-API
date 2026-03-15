@@ -1,16 +1,14 @@
 # ============================================================
 # modules/spatial_intelligence.py
-# Boundary Intelligence Engine  v1.1
+# Boundary Intelligence Engine  v1.2
 # ALKF Master Land Plan API
 #
-# Orchestrates the full pipeline:
-#   1. Resolve location + retrieve lot boundary
-#   2. Densify boundary at 1m intervals
-#   3. Classify view at each boundary point  (reuses view.py internals)
-#   4. Sample noise at each boundary point   (reuses noise.py internals)
-#   5. Evaluate noise threshold
-#   6. (Optional) extract non-building areas from lease plan
-#   7. Assemble and return structured JSON dict
+# v1.2 fixes:
+#   - Removed duplicate top-level concurrent.futures import
+#     (was imported 3× — once at module level, twice inside
+#     _fetch_view_features). Consolidated to single lazy import
+#     inside the function, consistent with the lazy-import strategy
+#     used for view.py and noise.py.
 #
 # NOTE: imports from view.py and noise.py are done lazily inside
 # functions to avoid triggering their matplotlib/contextily imports
@@ -24,7 +22,6 @@ import gc
 import logging
 import re
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
 from typing import Optional
 
 import geopandas as gpd
@@ -169,8 +166,7 @@ def _fetch_view_features(lon: float, lat: float, radius_m: int) -> dict:
 
     Returns dict with keys: buildings, parks, water (all EPSG:3857).
     """
-    from concurrent.futures import ThreadPoolExecutor, as_completed
-    from concurrent.futures import TimeoutError as FuturesTimeoutError
+    from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeoutError
 
     _empty = gpd.GeoDataFrame(geometry=[], crs=3857)
     features = {"buildings": _empty, "parks": _empty, "water": _empty}
