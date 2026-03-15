@@ -30,6 +30,7 @@ _LAYERS = {
     "VIEW_POINTS":   {"color": 3,  "linetype": "CONTINUOUS"},
     "NOISE_POINTS":  {"color": 1,  "linetype": "CONTINUOUS"},
     "NON_BUILDING":  {"color": 5,  "linetype": "DASHED"},
+    "ENTRY_POINTS":  {"color": 6,  "linetype": "CONTINUOUS"},  # magenta
     "LABELS":        {"color": 2,  "linetype": "CONTINUOUS"},
 }
 
@@ -129,7 +130,46 @@ def _write_non_building_areas(msp, non_building_areas, text_h):
     log.info(f"  DXF: NON_BUILDING  {written} zones")
 
 
-def _write_title_block(msp, site_id, intelligence, xs, ys, n):
+def _write_entry_points(msp, entry_points_data: dict, text_h: float, offset: float) -> None:
+    """
+    Write vehicle access points (X, Y, Z …) as POINT entities on the
+    ENTRY_POINTS layer with a text label on the LABELS layer.
+
+    entry_points_data is the dict returned by extract_entry_points():
+        { "entry_points": [ { label, geo_x, geo_y, pixel_x, pixel_y }, … ], … }
+    """
+    pts = entry_points_data.get("entry_points", [])
+    if not pts:
+        return
+    for ep in pts:
+        x = ep.get("geo_x")
+        y = ep.get("geo_y")
+        label = _ascii(str(ep.get("label", "?")))
+        if x is None or y is None:
+            continue
+        msp.add_point(
+            (x, y, 0),
+            dxfattribs={"layer": "ENTRY_POINTS", "color": 6},
+        )
+        # Circle marker at 2× normal offset so it stands out from noise/view pts
+        msp.add_circle(
+            (x, y),
+            radius=offset * 1.5,
+            dxfattribs={"layer": "ENTRY_POINTS", "color": 6},
+        )
+        msp.add_text(
+            label,
+            dxfattribs={
+                "layer":  "LABELS",
+                "height": text_h * 1.8,
+                "color":  6,
+                "insert": (x + offset * 2, y + offset * 2),
+            },
+        )
+    log.info(f"  DXF: ENTRY_POINTS  {len(pts)} points")
+
+
+
     xmin, ymin, xmax, ymax = _bbox(xs, ys)
     width   = xmax - xmin
     height  = ymax - ymin
@@ -196,6 +236,10 @@ def export_dxf(intelligence_data: dict) -> BytesIO:
     non_building = intelligence_data.get("non_building_areas", {})
     if non_building:
         _write_non_building_areas(msp, non_building, text_h)
+
+    entry_points = intelligence_data.get("entry_points", {})
+    if entry_points and entry_points.get("entry_points"):
+        _write_entry_points(msp, entry_points, text_h, offset)
 
     _write_title_block(msp, site_id, intelligence_data, xs, ys, n)
 
