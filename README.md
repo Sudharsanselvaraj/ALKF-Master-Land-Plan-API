@@ -8,6 +8,7 @@ Part of the **ALKF+ Automated Spatial Intelligence Platform**.
 
 ## Architecture Diagram
 
+```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    ALKF Master Land Plan API                        │
 │                   Flask · Gunicorn (gthread)                        │
@@ -102,6 +103,7 @@ Part of the **ALKF+ Automated Spatial Intelligence Platform**.
   Python 3.11 · Flask · Gunicorn gthread · Render Singapore
   ezdxf R2010 · OpenCV · osmnx · Shapely · PyProj
 ─────────────────────────────────────────────────────────────────────
+```
 
 ---
 
